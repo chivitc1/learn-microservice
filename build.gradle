@@ -23,8 +23,18 @@ repositories {
 	mavenCentral()
 }
 
+<<<<<<< HEAD
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+=======
+dependencies {
+	compile 'org.springframework.boot:spring-boot-starter-web'
+	compileOnly 'org.projectlombok:lombok:1.16.20'
+
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
+
+>>>>>>> 1.userstory01
 }

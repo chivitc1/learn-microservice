@@ -1,6 +1,14 @@
+<<<<<<< HEAD
 .gradle
 /build/
 !gradle/wrapper/gradle-wrapper.jar
+=======
+out/
+.gradle
+/build/
+!gradle/wrapper/gradle-wrapper.jar
+gradle/wrapper/gradle-wrapper.properties
+>>>>>>> 1.userstory01
 
 ### STS ###
 .apt_generated
