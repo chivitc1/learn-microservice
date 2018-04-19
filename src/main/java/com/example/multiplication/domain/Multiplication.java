@@ -1,19 +1,21 @@
 package com.example.multiplication.domain;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import lombok.RequiredArgsConstructor;
 
 @Getter
-public class Multiplication
+@EqualsAndHashCode
+@RequiredArgsConstructor
+public final class Multiplication
 {
-	private int factorA;
-	private int factorB;
+	private final int factorA;
+	private final int factorB;
 
 	private int result;
 
-	public Multiplication(int _factorA, int _factorB){
-		factorA = _factorA;
-		factorB = _factorB;
-		result = factorA * factorB;
+	public Multiplication(){
+		this(0, 0);
 	}
 
 	@Override

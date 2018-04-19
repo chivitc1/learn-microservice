@@ -1,6 +1,8 @@
 package com.example.multiplication.service;
 
 import com.example.multiplication.domain.Multiplication;
+import com.example.multiplication.service.MultiplicationService;
+import com.example.multiplication.service.RandomGeneratorService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
