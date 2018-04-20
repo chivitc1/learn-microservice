@@ -10,11 +10,8 @@ import org.springframework.test.context.junit4.SpringRunner;
 public class SocialMultiplicationApplicationTests {
 
 	@Test
-<<<<<<< HEAD
 	public void contextLoads() {
-=======
-	public void test() {
->>>>>>> 1.userstory01
+
 	}
 
 }

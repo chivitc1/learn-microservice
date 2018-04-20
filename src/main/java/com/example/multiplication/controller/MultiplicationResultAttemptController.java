@@ -26,17 +26,15 @@ public final class MultiplicationResultAttemptController
 
 	// TODO: implement POST
 	@PostMapping
-	ResponseEntity<ResultResponse> postResult(
+	ResponseEntity<MultiplicationResultAttempt> postResult(
 			@RequestBody MultiplicationResultAttempt _resultAttempt) {
-		return ResponseEntity.ok(
-				new ResultResponse(multiplicationService.checkAttempt(_resultAttempt))
-		);
-	}
 
-	@RequiredArgsConstructor
-	@NoArgsConstructor(force = true)
-	@Getter
-	public static final class ResultResponse {
-		private final boolean correct;
+		boolean isCorrect = multiplicationService.checkAttempt(_resultAttempt);
+		MultiplicationResultAttempt attemptCopy =
+				new MultiplicationResultAttempt(_resultAttempt.getUser(),
+						_resultAttempt.getMultiplication(),
+						_resultAttempt.getResultAttempt(),
+						isCorrect);
+		return ResponseEntity.ok(attemptCopy);
 	}
 }
