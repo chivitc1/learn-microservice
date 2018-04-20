@@ -30,3 +30,15 @@ for a given user.
 attempts.
 4. Show that attempts’ history to the users on the web
 page after they send a new one.
+
+### Refactoring
+TODO:
+1. MultiplicationResultAttempt should include boolean indicate if it's correct or not. We'll store it and later able to query the DB
+2. The service (MultiplicationServiceImpl) should
+   not only return the result calculated “on the fly” but
+   save it in the attempt too.
+3. The client shouldn’t be able to flag an attempt as
+   correct, so this field should not be read from the
+   REST API but instead calculated internally.
+4. The tests need to be changed to reflect our new
+   circumstances
