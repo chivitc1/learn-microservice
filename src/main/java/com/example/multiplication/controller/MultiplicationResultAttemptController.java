@@ -2,9 +2,6 @@ package com.example.multiplication.controller;
 
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.service.MultiplicationService;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -3,14 +3,20 @@ package com.example.multiplication.service;
 import com.example.multiplication.domain.Multiplication;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.domain.User;
+import com.example.multiplication.repository.MultiplicationRepository;
+import com.example.multiplication.repository.MultiplicationResultAttemptRepository;
+import com.example.multiplication.repository.UserRepository;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.Optional;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MultiplicationServiceImplTest
@@ -20,10 +26,21 @@ public class MultiplicationServiceImplTest
 	@Mock
 	private RandomGeneratorService randomGeneratorService;
 
+	@Mock
+	private MultiplicationResultAttemptRepository attemptRepository;
+
+	@Mock
+	private UserRepository userRepository;
+
+	@Mock
+	private MultiplicationRepository multiplicationRepository;
+
 	@Before
 	public void setUp() throws Exception
 	{
-		multiplicationServiceImpl = new MultiplicationServiceImpl(randomGeneratorService);
+		multiplicationServiceImpl = new MultiplicationServiceImpl(randomGeneratorService,
+				attemptRepository, userRepository, multiplicationRepository);
+		multiplicationRepository.save(new Multiplication(50, 60));
 	}
 
 	@Test
@@ -49,11 +66,20 @@ public class MultiplicationServiceImplTest
 		MultiplicationResultAttempt attempt =
 				new MultiplicationResultAttempt(user, multiplication, 3000, false);
 
+		MultiplicationResultAttempt verifiedAttempt =
+				new MultiplicationResultAttempt(user, multiplication, 3000, true);
+		given(userRepository.findByAlias("chinv"))
+				.willReturn(Optional.empty());
+		given(multiplicationRepository.findFirstByFactorAAndFactorB(
+				attempt.getMultiplication().getFactorA(),
+				attempt.getMultiplication().getFactorB())).willReturn(Optional.empty());
+
 		// when
 		boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
 
 		// verify
 		assertThat(attemptResult).isTrue();
+		verify(attemptRepository).save(verifiedAttempt);
 	}
 
 	@Test
@@ -65,10 +91,17 @@ public class MultiplicationServiceImplTest
 		MultiplicationResultAttempt attempt =
 				new MultiplicationResultAttempt(user, multiplication, 3001, false);
 
+		given(userRepository.findByAlias("chinv"))
+				.willReturn(Optional.empty());
+		given(multiplicationRepository.findFirstByFactorAAndFactorB(
+				attempt.getMultiplication().getFactorA(),
+				attempt.getMultiplication().getFactorB())).willReturn(Optional.empty());
+
 		// when
 		boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
 
 		// verify
 		assertThat(attemptResult).isFalse();
+		verify(attemptRepository).save(attempt);
 	}
 }
