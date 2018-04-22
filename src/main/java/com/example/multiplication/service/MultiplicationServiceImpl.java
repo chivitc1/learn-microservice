@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -57,7 +56,7 @@ public class MultiplicationServiceImpl implements MultiplicationService
 	 */
 	@Transactional
 	@Override
-	public boolean checkAttempt(MultiplicationResultAttempt _resultAttempt)
+	public MultiplicationResultAttempt checkAttempt(MultiplicationResultAttempt _resultAttempt)
 	{
 		// Check if the user already exists for that alias
 		Optional<User> user = userRepository.findByAlias(_resultAttempt.getUser().getAlias());
@@ -84,7 +83,7 @@ public class MultiplicationServiceImpl implements MultiplicationService
 		// Stores the attempt
 		attemptRepository.save(checkedAttempt);
 
-		return correct;
+		return checkedAttempt;
 	}
 
 }

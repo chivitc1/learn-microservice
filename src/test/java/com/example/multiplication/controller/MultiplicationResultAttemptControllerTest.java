@@ -3,15 +3,11 @@ package com.example.multiplication.controller;
 import com.example.multiplication.domain.Multiplication;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.domain.User;
-import com.example.multiplication.repository.MultiplicationResultAttemptRepository;
-import com.example.multiplication.repository.UserRepository;
 import com.example.multiplication.service.MultiplicationService;
-import com.example.multiplication.service.MultiplicationServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.json.JacksonTester;
@@ -59,12 +55,15 @@ public class MultiplicationResultAttemptControllerTest
 
 	private void genericParameterizedTest(final boolean _correct) throws Exception
 	{
-		given(multiplicationService.checkAttempt(any(MultiplicationResultAttempt.class)))
-				.willReturn(_correct);
 		User user = new User("chinv");
-		Multiplication multiplication = new Multiplication(50, 70);
+		Multiplication multiplication = new Multiplication(50, 60);
+		int resultAttempt = 3000;
+		given(multiplicationService.checkAttempt(any(MultiplicationResultAttempt.class)))
+				.willReturn(new MultiplicationResultAttempt(user, multiplication, resultAttempt, _correct));
+
+
 		MultiplicationResultAttempt attempt =
-				new MultiplicationResultAttempt(user, multiplication, 3500, _correct);
+				new MultiplicationResultAttempt(user, multiplication, resultAttempt, _correct);
 
 		// when
 		MockHttpServletResponse response = mockMvc.perform(

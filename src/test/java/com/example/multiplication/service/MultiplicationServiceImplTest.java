@@ -75,10 +75,10 @@ public class MultiplicationServiceImplTest
 				attempt.getMultiplication().getFactorB())).willReturn(Optional.empty());
 
 		// when
-		boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
+		MultiplicationResultAttempt attemptChecked = multiplicationServiceImpl.checkAttempt(attempt);
 
 		// verify
-		assertThat(attemptResult).isTrue();
+		assertThat(attemptChecked.isCorrect()).isTrue();
 		verify(attemptRepository).save(verifiedAttempt);
 	}
 
@@ -98,10 +98,10 @@ public class MultiplicationServiceImplTest
 				attempt.getMultiplication().getFactorB())).willReturn(Optional.empty());
 
 		// when
-		boolean attemptResult = multiplicationServiceImpl.checkAttempt(attempt);
+		MultiplicationResultAttempt attemptChecked = multiplicationServiceImpl.checkAttempt(attempt);
 
 		// verify
-		assertThat(attemptResult).isFalse();
+		assertThat(attemptChecked.isCorrect()).isFalse();
 		verify(attemptRepository).save(attempt);
 	}
 }
