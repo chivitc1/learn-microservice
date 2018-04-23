@@ -3,6 +3,8 @@ package com.example.multiplication.service;
 import com.example.multiplication.domain.Multiplication;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 
+import java.util.List;
+
 public interface MultiplicationService
 {
 	/**
@@ -17,4 +19,6 @@ public interface MultiplicationService
 	 * multiplication, false otherwise.
 	 */
 	MultiplicationResultAttempt checkAttempt(final MultiplicationResultAttempt _resultAttempt);
+
+	List<MultiplicationResultAttempt> getStatsForUser(String _userAlias);
 }

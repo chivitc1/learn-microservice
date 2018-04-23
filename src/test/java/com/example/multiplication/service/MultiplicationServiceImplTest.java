@@ -6,12 +6,14 @@ import com.example.multiplication.domain.User;
 import com.example.multiplication.repository.MultiplicationRepository;
 import com.example.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.example.multiplication.repository.UserRepository;
+import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -103,5 +105,32 @@ public class MultiplicationServiceImplTest
 		// verify
 		assertThat(attemptChecked.isCorrect()).isFalse();
 		verify(attemptRepository).save(attempt);
+	}
+
+	@Test
+	public void retrieveStatsTest() {
+		// given
+		Multiplication multiplication = new Multiplication(50, 60);
+		User user = new User("chinv");
+
+		MultiplicationResultAttempt attempt1 = new
+				MultiplicationResultAttempt(
+				user, multiplication, 3010, false);
+		MultiplicationResultAttempt attempt2 = new
+				MultiplicationResultAttempt(
+				user, multiplication, 3051, false);
+		List<MultiplicationResultAttempt> latestAttempts =
+				Lists.newArrayList(attempt1, attempt2);
+
+		given(userRepository.findByAlias("chinv")).willReturn(Optional.empty());
+		given(attemptRepository.findTop5ByUserAliasOrderByIdDesc("chinv"))
+			.willReturn(latestAttempts);
+
+		// when
+		List<MultiplicationResultAttempt> latestAttemptResult =
+				multiplicationServiceImpl.getStatsForUser("chinv");
+
+		// verify
+		assertThat(latestAttemptResult).isEqualTo(latestAttempts);
 	}
 }
