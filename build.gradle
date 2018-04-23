@@ -29,6 +29,7 @@ dependencies {
 	compileOnly 'org.projectlombok:lombok:1.16.20'
 
 	runtime 'com.h2database:h2'
+	compile("org.springframework.boot:spring-boot-starter-amqp")
 
 	testCompile 'org.springframework.boot:spring-boot-starter-test'
 	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'

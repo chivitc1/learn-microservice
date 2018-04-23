@@ -3,6 +3,8 @@ package com.example.multiplication.service;
 import com.example.multiplication.domain.Multiplication;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.domain.User;
+import com.example.multiplication.event.EventDispatcher;
+import com.example.multiplication.event.MultiplicationSolvedEvent;
 import com.example.multiplication.repository.MultiplicationRepository;
 import com.example.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.example.multiplication.repository.UserRepository;
@@ -37,11 +39,14 @@ public class MultiplicationServiceImplTest
 	@Mock
 	private MultiplicationRepository multiplicationRepository;
 
+	@Mock
+	private EventDispatcher eventDispatcher;
+
 	@Before
 	public void setUp() throws Exception
 	{
 		multiplicationServiceImpl = new MultiplicationServiceImpl(randomGeneratorService,
-				attemptRepository, userRepository, multiplicationRepository);
+				attemptRepository, userRepository, multiplicationRepository, eventDispatcher);
 		multiplicationRepository.save(new Multiplication(50, 60));
 	}
 
@@ -82,6 +87,11 @@ public class MultiplicationServiceImplTest
 		// verify
 		assertThat(attemptChecked.isCorrect()).isTrue();
 		verify(attemptRepository).save(verifiedAttempt);
+
+		MultiplicationSolvedEvent multiplicationSolvedEvent =
+				new MultiplicationSolvedEvent(attemptChecked.getId(),
+					attemptChecked.getUser().getId(), attemptChecked.isCorrect());
+		verify(eventDispatcher).send(multiplicationSolvedEvent);
 	}
 
 	@Test
@@ -105,6 +115,11 @@ public class MultiplicationServiceImplTest
 		// verify
 		assertThat(attemptChecked.isCorrect()).isFalse();
 		verify(attemptRepository).save(attempt);
+
+		MultiplicationSolvedEvent multiplicationSolvedEvent =
+				new MultiplicationSolvedEvent(attemptChecked.getId(),
+						attemptChecked.getUser().getId(), attemptChecked.isCorrect());
+		verify(eventDispatcher).send(multiplicationSolvedEvent);
 	}
 
 	@Test

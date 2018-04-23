@@ -3,6 +3,8 @@ package com.example.multiplication.service;
 import com.example.multiplication.domain.Multiplication;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.domain.User;
+import com.example.multiplication.event.EventDispatcher;
+import com.example.multiplication.event.MultiplicationSolvedEvent;
 import com.example.multiplication.repository.MultiplicationRepository;
 import com.example.multiplication.repository.MultiplicationResultAttemptRepository;
 import com.example.multiplication.repository.UserRepository;
@@ -25,16 +27,20 @@ public class MultiplicationServiceImpl implements MultiplicationService
 
 	private MultiplicationRepository multiplicationRepository;
 
+	private EventDispatcher eventDispatcher;
+
 	@Autowired
 	public MultiplicationServiceImpl(final RandomGeneratorService _randomGeneratorService,
 									 final MultiplicationResultAttemptRepository _attemptRepository,
 									 final UserRepository _userRepository,
-									 final MultiplicationRepository _multiplicationRepository)
+									 final MultiplicationRepository _multiplicationRepository,
+									 final EventDispatcher _eventDispatcher)
 	{
 		this.randomGeneratorService = _randomGeneratorService;
 		this.attemptRepository = _attemptRepository;
 		this.userRepository = _userRepository;
 		this.multiplicationRepository = _multiplicationRepository;
+		this.eventDispatcher = _eventDispatcher;
 	}
 
 	/**
@@ -83,6 +89,11 @@ public class MultiplicationServiceImpl implements MultiplicationService
 
 		// Stores the attempt
 		attemptRepository.save(checkedAttempt);
+
+		// Communicates the result via Event, wont send if any exception occur in Transaction
+		eventDispatcher.send(new MultiplicationSolvedEvent(checkedAttempt.getId(),
+				checkedAttempt.getUser().getId(),
+				checkedAttempt.isCorrect()));
 
 		return checkedAttempt;
 	}
