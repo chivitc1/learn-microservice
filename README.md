@@ -112,4 +112,10 @@ TODO:
  ##### Event
  - MultiplicationSolvedEvent
  
+ ### Identify domain model of story 03
+ - ScoreCard: Models one incremental set of points that a given user gets at a given time
+ - Badge: An enumeration of all possible badges in the game.
+ - BadgeCard: Represents a badge linked to a certain user, won at a certain time.
+ - LeaderBoardRow: A position in the leaderboard that is the total score together with the user.
+ - GameStats: Score and badges for a given user. It can be used for a given game iteration (one attempt’s result) or for a collection of attempts (aggregating score and badges).
  
