@@ -42,3 +42,74 @@ TODO:
    REST API but instead calculated internally.
 4. The tests need to be changed to reflect our new
    circumstances
+   
+ ## User story 03
+ As a user of the application, i want to be more motivated to participate every
+ day, so i don’t give up easily.
+ 
+ What we’ll do is assign points to every correct answer that users submit. To
+ keep it simple, we’ll only give points if they send a correct answer. Instead
+ of giving one point, which doesn’t feel as good, we’ll make it 10 points per
+ correct answer.
+ 
+ A leaderboard with the top scores will be shown on the page, so players
+ can find themselves in the ranking and compete with others.
+ We’ll create also some basic badges: Bronze (10 correct attempts),
+ Silver (25 correct attempts), and Gold (50 correct attempts). The badges
+ should not be extraordinarily difficult to obtain, because that wouldn’t
+ motivate our users. Because the first correct attempt can be hard to
+ achieve, we’ll also introduce the badge called First Correct!, to give quick
+ positive feedback.
+ 
+ We could introduce more badges in the future, some other game
+ mechanics, etc. But with these basics, we already have something that may
+ motivate our users to come back and keep playing, competing with their
+ peers.
+ 
+ ### Start think about our app as microservices
+ We decided to move to a microservices architecture: we’ll create
+ a different part of our system that’s independently deployable
+ and decoupled from the previous business logic (the gamification
+ microservice). 
+ 
+ We’ll need to connect the existing Spring Boot application
+ (that now we can call the multiplication microservice) with the new one
+ and make sure that they can scale up independently.
+ 
+ Having multiplication and gamification separated
+ in different microservices will force you to think of a loosely-coupled
+ solution: you can replicate part of the data, or have one service calling the
+ other one whenever it’s needed.
+ 
+ Having independently deployable services for the multiplication and
+ gamification domains will allow us to test them separately, using their
+ APIs. In the future, we could have the gamification team evolving
+ their services without interfering in the development cycle of the
+ multiplication team. If they need new interfaces for communication,
+ they can just create fake calls or messages—therefore defining their
+ API changes—and move forward. 
+ 
+ #### Other possible services
+ - Send an email to Administrator when a user exhibits a suspicious behavior (too many consecutive correct attempt)
+ - Gather analytics and build statistics like correct attempts per user, per time of the day,...
+ - Add social network plugin to post new correctly-solved attempt.
+ 
+ #### Event-driven in our app
+ ##### Multiplication Microservice
+ - Publisher
+ - Check attempt
+ - Store data
+ - Send event
+ - Generate result 
+ 
+ ##### Gamification Microservice
+ - Subcriber
+ - Check result
+ - Assign points
+ - Assign badges
+ - Update leaderboard
+ 
+ ##### Event
+ - MultiplicationSolvedEvent
+ 
+ 
