@@ -25,7 +25,12 @@ repositories {
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
-	runtime('com.h2database:h2')
-	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+	compile 'org.springframework.boot:spring-boot-starter-data-jpa'
+	compileOnly 'org.projectlombok:lombok:1.16.20'
+
+	runtime 'com.h2database:h2'
+	compile("org.springframework.boot:spring-boot-starter-amqp")
+
+	testCompile 'org.springframework.boot:spring-boot-starter-test'
+	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
 }
