@@ -33,7 +33,7 @@ public class GameServiceImplTest
 	@Before
 	public void setUp() throws Exception
 	{
-		gameService = new GameServiceImpl();
+		gameService = new GameServiceImpl(scoreCardRepository, badgeCardRepository);
 	}
 
 	@Test
