@@ -47,7 +47,7 @@ public class GameServiceImplTest
 		Long attemptId = 1L;
 		int totalScore = 10;
 		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
-		boolean correct = false;
+		boolean correct = true;
 		given(scoreCardRepository.getTotalScoreForUser(userId))
 				.willReturn(totalScore);
 		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
@@ -58,7 +58,6 @@ public class GameServiceImplTest
 		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
 
 		// then
-		assertThat(gameStats.getScore()).isEqualTo(totalScore);
 		assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_WON);
 	}
 
