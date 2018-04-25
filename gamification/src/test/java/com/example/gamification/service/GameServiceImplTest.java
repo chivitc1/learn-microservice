@@ -6,7 +6,6 @@ import com.example.gamification.domain.GameStats;
 import com.example.gamification.domain.ScoreCard;
 import com.example.gamification.repository.BadgeCardRepository;
 import com.example.gamification.repository.ScoreCardRepository;
-import org.assertj.core.util.Lists;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -19,9 +18,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static org.mockito.BDDMockito.given;
-
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.BDDMockito.given;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GameServiceImplTest
@@ -111,6 +109,33 @@ public class GameServiceImplTest
 
 		// then
 		assertThat(gameStats.getBadges()).containsOnly(Badge.SILVER_MULTIPLICATOR);
+	}
+
+	@Test
+	public void processCorrectAttemptForGoldBadge() throws Exception
+	{
+		// given
+		Long userId = 1L;
+		Long attemptId = 30L;
+		int totalScore = 500; //total 50 correct attempt
+		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
+		BadgeCard bronzeBadge = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
+		BadgeCard silverBadge = new BadgeCard(userId, Badge.SILVER_MULTIPLICATOR);
+
+		boolean correct = true;
+		given(scoreCardRepository.getTotalScoreForUser(userId))
+				.willReturn(totalScore);
+
+		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+				.willReturn(createNScoreCards(50, userId));
+
+		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+				.willReturn(Arrays.asList(firstWonBadge, bronzeBadge, silverBadge));
+		// when
+		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
+
+		// then
+		assertThat(gameStats.getBadges()).containsOnly(Badge.GOLD_MULTIPLICATOR);
 	}
 
 	private List<ScoreCard> createNScoreCards(int _numberOfScoreCards
