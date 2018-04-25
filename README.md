@@ -119,3 +119,16 @@ TODO:
  - LeaderBoardRow: A position in the leaderboard that is the total score together with the user.
  - GameStats: Score and badges for a given user. It can be used for a given game iteration (one attempt’s result) or for a collection of attempts (aggregating score and badges).
  
+ ### Badges
+ - First-won: first correct attempt 
+ - Bronze: first reach 100 points (about 10 correct attempts)
+ - Silver: first reach 250 points (about 25 correct attempts)
+ - Gold: first reach 500 points (about 50 correct attempts)
+ 
+ ### Game logic
+ - When we receive a correct attempt, we create a ScoreCard object
+ (with a default score of 10) and persist it in the database. 
+ - Then, we invoke the method processForBadges(), which will query the database
+ for a given user ID and assign new badges when necessary.  
+ - Finally, we combine the scores with badges in a GameStats object and return this
+ result.

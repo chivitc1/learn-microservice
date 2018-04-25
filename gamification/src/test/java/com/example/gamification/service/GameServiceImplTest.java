@@ -14,6 +14,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static org.mockito.BDDMockito.given;
 
@@ -44,7 +47,6 @@ public class GameServiceImplTest
 		Long attemptId = 1L;
 		int totalScore = 10;
 		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
-		BadgeCard badgeCard = new BadgeCard(userId, Badge.FIRST_WON);
 		boolean correct = false;
 		given(scoreCardRepository.getTotalScoreForUser(userId))
 				.willReturn(totalScore);
@@ -61,8 +63,37 @@ public class GameServiceImplTest
 	}
 
 	@Test
-	public void retrieveStatsForUser() throws Exception
+	public void processCorrectAttemptForBronzeBadge() throws Exception
 	{
+		// given
+		Long userId = 1L;
+		Long attemptId = 30L;
+		int totalScore = 100; //total ten correct attempt
+		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
+
+		boolean correct = true;
+		given(scoreCardRepository.getTotalScoreForUser(userId))
+				.willReturn(totalScore);
+
+		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+				.willReturn(createNScoreCards(10, userId));
+
+		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+				.willReturn(Collections.singletonList(firstWonBadge));
+		// when
+		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
+
+		// then
+		assertThat(gameStats.getScore()).isEqualTo(ScoreCard.DEFAULT_SCORE);
+		assertThat(gameStats.getBadges()).containsOnly(Badge.BRONZE_MULTIPLICATOR);
+	}
+
+	private List<ScoreCard> createNScoreCards(int _numberOfScoreCards
+				, Long _userId)
+	{
+		return IntStream.range(0, _numberOfScoreCards)
+				.mapToObj(i -> new ScoreCard(_userId, (long)i))
+				.collect(Collectors.toList());
 	}
 
 }

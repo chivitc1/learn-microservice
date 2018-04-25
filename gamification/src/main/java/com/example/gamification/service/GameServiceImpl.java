@@ -6,13 +6,17 @@ import com.example.gamification.domain.GameStats;
 import com.example.gamification.domain.ScoreCard;
 import com.example.gamification.repository.BadgeCardRepository;
 import com.example.gamification.repository.ScoreCardRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 public class GameServiceImpl implements GameService
 {
 	@Autowired
@@ -40,15 +44,91 @@ public class GameServiceImpl implements GameService
 	 * score and badge cards obtained
 	 */
 	@Override
-	public GameStats newAttemptForUser(Long userId, Long attemptId, boolean correct)
+	public GameStats newAttemptForUser(final Long userId, final Long attemptId, final boolean correct)
 	{
-		int totalScore = scoreCardRepository.getTotalScoreForUser(userId);
-		List<Badge> badgeList = new ArrayList<>();
-		if (totalScore == ScoreCard.DEFAULT_SCORE) {
-			badgeList.add(Badge.FIRST_WON);
+		if (correct) {
+			ScoreCard scoreCard = new ScoreCard(userId, attemptId);
+			scoreCardRepository.save(scoreCard);
+			log.info("User with id {} score {} points for attempt id {}",
+					userId, scoreCard.getScore(), attemptId);
+			List<BadgeCard> badgeCards = processForBadges(userId, attemptId);
+
+			return new GameStats(userId, scoreCard.getScore(),
+					badgeCards.stream().map(BadgeCard::getBadge)
+					.collect(Collectors.toList()));
 		}
 
-		return new GameStats(userId, ScoreCard.DEFAULT_SCORE, badgeList);
+		return GameStats.emptyStats(userId);
+	}
+
+	private List<BadgeCard> processForBadges(final Long _userId, final Long _attemptId)
+	{
+		List<BadgeCard> badgeCards = new ArrayList<>();
+		int totalScore = scoreCardRepository.getTotalScoreForUser(_userId);
+		log.info("New score for user {} is {}", _userId, totalScore);
+		List<ScoreCard> scoreCardList =
+				scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(_userId);
+		List<BadgeCard> badgeCardList =
+				badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(_userId);
+
+		// Badges depending on score
+		checkAndGiveBadgeBasedOnScore(badgeCardList,
+				Badge.BRONZE_MULTIPLICATOR, totalScore, 100, _userId)
+				.ifPresent(badgeCards::add);
+		checkAndGiveBadgeBasedOnScore(badgeCardList,
+				Badge.SILVER_MULTIPLICATOR, totalScore, 250, _userId)
+				.ifPresent(badgeCards::add);
+		checkAndGiveBadgeBasedOnScore(badgeCardList,
+				Badge.GOLD_MULTIPLICATOR, totalScore, 500, _userId)
+				.ifPresent(badgeCards::add);
+
+		// First won badge
+		if(scoreCardList.size() == 1 &&
+				!containsBadge(badgeCardList, Badge.FIRST_WON)) {
+			BadgeCard firstWonBadge = giveBadgeToUser(Badge.FIRST_WON, _userId);
+			badgeCards.add(firstWonBadge);
+		}
+
+		return badgeCards;
+	}
+
+	/**
+	 * Checks if the passed list of badges includes the one
+	 * being checked
+	 */
+	private boolean containsBadge(List<BadgeCard> _badgeCardList, Badge _badge)
+	{
+		return _badgeCardList.stream().anyMatch(b -> b.getBadge().equals(_badge));
+	}
+
+	/**
+	 * Convenience method to check the current score against
+	 * the different thresholds to gain badges.
+	 * It also assigns badge to user if the conditions are met.
+	 */
+	private Optional<BadgeCard> checkAndGiveBadgeBasedOnScore(final List<BadgeCard> _badgeCardList,
+															  final Badge _badge,
+															  final int _score,
+															  final int _scoreThreshold,
+															  final Long _userId)
+	{
+		if (_score >= _scoreThreshold && !containsBadge(_badgeCardList, _badge)) {
+			return Optional.of(giveBadgeToUser(_badge, _userId));
+		}
+		
+		return Optional.empty();
+	}
+
+	/**
+	 * Assigns a new badge to the given user
+	 */
+	private BadgeCard giveBadgeToUser(Badge _badge, Long _userId)
+	{
+		BadgeCard badgeCard = new BadgeCard(_userId, _badge);
+		badgeCardRepository.save(badgeCard);
+		log.info("User with id {} won a new badge: {}", _userId, _badge);
+
+		return badgeCard;
 	}
 
 	/**
@@ -59,6 +139,10 @@ public class GameServiceImpl implements GameService
 	@Override
 	public GameStats retrieveStatsForUser(Long userId)
 	{
-		return null;
+		int score = scoreCardRepository.getTotalScoreForUser(userId);
+		List<BadgeCard> badgeCards = badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId);
+
+		return new GameStats(userId, score, badgeCards.stream()
+			.map(BadgeCard::getBadge).collect(Collectors.toList()));
 	}
 }
