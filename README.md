@@ -132,3 +132,6 @@ TODO:
  for a given user ID and assign new badges when necessary.  
  - Finally, we combine the scores with badges in a GameStats object and return this
  result.
+ 
+ ### new requirement
+ - New badge is assigned to the users whenever they’re sending an attempt with the number 42 as one of the factors: Lucky badge.
