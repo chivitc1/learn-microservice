@@ -39,6 +39,29 @@ public class GameServiceImplTest
 	}
 
 	@Test
+	public void testRetrieveStatsForUser() throws Exception {
+		// given
+		Long userId = 1L;
+		Long attemptId = 10L;
+		int totalScore = 10;
+		List<ScoreCard> scoreCardList = createNScoreCards(1, userId);
+
+		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
+		given(scoreCardRepository.getTotalScoreForUser(userId))
+				.willReturn(totalScore);
+		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+				.willReturn(scoreCardList);
+		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+				.willReturn(Arrays.asList(firstWonBadge));
+		// when
+		GameStats gameStats = gameService.retrieveStatsForUser(userId);
+
+		// then
+		assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_WON);
+		assertThat(gameStats.getScore()).isEqualTo(totalScore);
+	}
+
+	@Test
 	public void processFirstCorrectAttemptTest() throws Exception
 	{
 		// given
@@ -172,5 +195,4 @@ public class GameServiceImplTest
 				.mapToObj(i -> new ScoreCard(_userId, (long)i))
 				.collect(Collectors.toList());
 	}
-
 }
