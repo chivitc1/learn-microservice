@@ -21,4 +21,6 @@ public interface MultiplicationService
 	MultiplicationResultAttempt checkAttempt(final MultiplicationResultAttempt _resultAttempt);
 
 	List<MultiplicationResultAttempt> getStatsForUser(String _userAlias);
+
+	MultiplicationResultAttempt getMultiplicationResult(Long _resultId);
 }

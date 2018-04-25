@@ -37,7 +37,7 @@ public class MultiplicationResultAttemptControllerTest
 	@Autowired
 	private MockMvc mockMvc;
 
-	private JacksonTester<MultiplicationResultAttempt> jsonResult;
+	private JacksonTester<MultiplicationResultAttempt> jsonAttemptResult;
 
 	private JacksonTester<List<MultiplicationResultAttempt>> jsonResultAttemptList;
 
@@ -75,14 +75,14 @@ public class MultiplicationResultAttemptControllerTest
 		MockHttpServletResponse response = mockMvc.perform(
 				post("/results")
 						.contentType(MediaType.APPLICATION_JSON)
-						.content(jsonResult.write(attempt).getJson()))
+						.content(jsonAttemptResult.write(attempt).getJson()))
 				.andReturn().getResponse();
 
 		// verify
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getContentAsString())
 				.isEqualTo(
-						jsonResult.write(new MultiplicationResultAttempt(attempt.getUser(),
+						jsonAttemptResult.write(new MultiplicationResultAttempt(attempt.getUser(),
 								attempt.getMultiplication(),
 								attempt.getResultAttempt(),
 								_correct))
@@ -113,5 +113,29 @@ public class MultiplicationResultAttemptControllerTest
 		assertThat(response.getContentAsString())
 				.isEqualTo(jsonResultAttemptList.write(recentAttempts).getJson());
 
+	}
+
+	@Test
+	public void getResultByIdTest() throws Exception {
+		// given
+		Long resultId = 1L;
+		Multiplication multiplication = new Multiplication(30, 40);
+		User user = new User("chinv");
+		MultiplicationResultAttempt resultAttempt =
+				new MultiplicationResultAttempt(user, multiplication, 121, false);
+		given(multiplicationService.getMultiplicationResult(resultId))
+				.willReturn(resultAttempt);
+		// when
+		MockHttpServletResponse response = mockMvc.perform(
+				get("/results/" + resultId)
+					.accept(MediaType.APPLICATION_JSON))
+				.andReturn().getResponse();
+
+		// then
+		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+		assertThat(response.getContentAsString())
+				.isEqualTo(
+						jsonAttemptResult.write(resultAttempt).getJson()
+				);
 	}
 }

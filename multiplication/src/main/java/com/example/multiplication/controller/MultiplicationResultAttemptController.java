@@ -5,6 +5,7 @@ import com.example.multiplication.service.MultiplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -40,5 +41,11 @@ public final class MultiplicationResultAttemptController
 		return ResponseEntity.ok(
 				multiplicationService.getStatsForUser(alias)
 		);
+	}
+
+	@GetMapping("/{resultId}")
+	public ResponseEntity getResultById(@PathVariable("resultId") Long _resultId) {
+		return ResponseEntity.ok(
+				multiplicationService.getMultiplicationResult(_resultId));
 	}
 }

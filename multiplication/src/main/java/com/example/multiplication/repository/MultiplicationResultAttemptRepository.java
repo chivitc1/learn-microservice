@@ -13,4 +13,6 @@ public interface MultiplicationResultAttemptRepository
 	identified by their alias.
 	 */
 	List<MultiplicationResultAttempt> findTop5ByUserAliasOrderByIdDesc(String userAlias);
+
+	MultiplicationResultAttempt getById(Long _resultId);
 }
