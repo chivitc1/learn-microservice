@@ -67,21 +67,24 @@ public class GameServiceImplTest
 		Long userId = 1L;
 		Long attemptId = 10L;
 		int totalScore = 10;
+		List<ScoreCard> scoreCardList = createNScoreCards(1, userId);
 		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
+		scoreCardList.add(scoreCard);
+
 		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
 		boolean correct = false;
 		given(scoreCardRepository.getTotalScoreForUser(userId))
 				.willReturn(totalScore);
 		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
-				.willReturn(Collections.singletonList(scoreCard));
+				.willReturn(scoreCardList);
 		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
-				.willReturn(Collections.emptyList());
+				.willReturn(Arrays.asList(firstWonBadge));
 		// when
 		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
 
 		// then
-		assertThat(gameStats.getBadges()).isEmpty();
-		assertThat(gameStats.getScore()).isEqualTo(0);
+		assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_WON);
+		assertThat(gameStats.getScore()).isEqualTo(totalScore);
 	}
 
 	@Test

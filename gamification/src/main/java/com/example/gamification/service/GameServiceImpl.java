@@ -46,19 +46,22 @@ public class GameServiceImpl implements GameService
 	@Override
 	public GameStats newAttemptForUser(final Long userId, final Long attemptId, final boolean correct)
 	{
+		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
+		log.info("User with id {} score {} points for attempt id {}",
+				userId, scoreCard.getScore(), attemptId);
+		scoreCardRepository.save(scoreCard);
 		if (correct) {
-			ScoreCard scoreCard = new ScoreCard(userId, attemptId);
-			scoreCardRepository.save(scoreCard);
-			log.info("User with id {} score {} points for attempt id {}",
-					userId, scoreCard.getScore(), attemptId);
 			List<BadgeCard> badgeCards = processForBadges(userId, attemptId);
 
 			return new GameStats(userId, scoreCard.getScore(),
 					badgeCards.stream().map(BadgeCard::getBadge)
 					.collect(Collectors.toList()));
+		} else {
+			List<BadgeCard> badgeCards = badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId);
+			return new GameStats(userId, scoreCard.getScore(),
+					badgeCards.stream().map(BadgeCard::getBadge)
+							.collect(Collectors.toList()));
 		}
-
-		return GameStats.emptyStats(userId);
 	}
 
 	private List<BadgeCard> processForBadges(final Long _userId, final Long _attemptId)
@@ -137,7 +140,7 @@ public class GameServiceImpl implements GameService
 	 * @return the total statistics for that user
 	 */
 	@Override
-	public GameStats retrieveStatsForUser(Long userId)
+	public GameStats retrieveStatsForUser(final Long userId)
 	{
 		int score = scoreCardRepository.getTotalScoreForUser(userId);
 		List<BadgeCard> badgeCards = badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId);
