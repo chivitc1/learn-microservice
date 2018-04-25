@@ -61,6 +61,30 @@ public class GameServiceImplTest
 	}
 
 	@Test
+	public void processWrongAttemptTest() throws Exception
+	{
+		// given
+		Long userId = 1L;
+		Long attemptId = 10L;
+		int totalScore = 10;
+		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
+		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
+		boolean correct = false;
+		given(scoreCardRepository.getTotalScoreForUser(userId))
+				.willReturn(totalScore);
+		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+				.willReturn(Collections.singletonList(scoreCard));
+		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+				.willReturn(Collections.emptyList());
+		// when
+		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
+
+		// then
+		assertThat(gameStats.getBadges()).isEmpty();
+		assertThat(gameStats.getScore()).isEqualTo(0);
+	}
+
+	@Test
 	public void processCorrectAttemptForBronzeBadge() throws Exception
 	{
 		// given
