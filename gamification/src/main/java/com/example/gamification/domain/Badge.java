@@ -12,7 +12,8 @@ public enum Badge
 
 	// Other badges won for different conditions
 	FIRST_ATTEMPT("FIRST_ATTEMPT"),
-	FIRST_WON("FIRST_WON");
+	FIRST_WON("FIRST_WON"),
+	LUCKY_MULTIPLICATION("LUCKY_MULTIPLICATION");
 
 	private final String text;
 

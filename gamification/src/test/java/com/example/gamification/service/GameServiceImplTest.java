@@ -188,6 +188,32 @@ public class GameServiceImplTest
 		assertThat(gameStats.getBadges()).containsOnly(Badge.GOLD_MULTIPLICATOR);
 	}
 
+	@Test
+	public void processCorrectAttemptForLuckyBadge() throws Exception
+	{
+		// given
+		Long userId = 1L;
+		Long attemptId = 30L;
+		int totalScore = 10; //total 50 correct attempt
+		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
+		BadgeCard bronzeBadge = new BadgeCard(userId, Badge.LUCKY_MULTIPLICATION);
+
+		boolean correct = false;
+		given(scoreCardRepository.getTotalScoreForUser(userId))
+				.willReturn(totalScore);
+
+		given(scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(userId))
+				.willReturn(createNScoreCards(1, userId));
+
+		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
+				.willReturn(Arrays.asList(firstWonBadge));
+		// when
+		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
+
+		// then
+		assertThat(gameStats.getBadges()).containsOnly(Badge.LUCKY_MULTIPLICATION);
+	}
+
 	private List<ScoreCard> createNScoreCards(int _numberOfScoreCards
 				, Long _userId)
 	{
