@@ -1,5 +1,7 @@
 package com.example.gamification.service;
 
+import com.example.gamification.client.MultiplicationResultAttemptClient;
+import com.example.gamification.client.dto.MultiplicationResultAttempt;
 import com.example.gamification.domain.Badge;
 import com.example.gamification.domain.BadgeCard;
 import com.example.gamification.domain.GameStats;
@@ -11,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,17 +22,23 @@ import java.util.stream.Collectors;
 @Slf4j
 public class GameServiceImpl implements GameService
 {
+	public static final int LUCKY_NUMBER = 42;
+
 	@Autowired
 	private ScoreCardRepository scoreCardRepository;
 
 	@Autowired
 	private BadgeCardRepository badgeCardRepository;
 
+	@Autowired
+	private MultiplicationResultAttemptClient multiplicationClient;
+
 	public GameServiceImpl(ScoreCardRepository _scoreCardRepository,
-						   BadgeCardRepository _badgeCardRepository)
+						   BadgeCardRepository _badgeCardRepository, MultiplicationResultAttemptClient _multiplicationClient)
 	{
 		this.scoreCardRepository = _scoreCardRepository;
 		this.badgeCardRepository = _badgeCardRepository;
+		this.multiplicationClient = _multiplicationClient;
 	}
 
 	/**
@@ -90,6 +99,16 @@ public class GameServiceImpl implements GameService
 				!containsBadge(badgeCardList, Badge.FIRST_WON)) {
 			BadgeCard firstWonBadge = giveBadgeToUser(Badge.FIRST_WON, _userId);
 			badgeCards.add(firstWonBadge);
+		}
+
+		// Lucky badge
+		MultiplicationResultAttempt resultAttempt =
+				multiplicationClient.retrieveMultiplicationResultAttemptbyId(_attemptId);
+		if (!containsBadge(badgeCardList, Badge.LUCKY_MULTIPLICATION) &&
+				Arrays.asList(resultAttempt.getMultiplicationFactorA(),
+					resultAttempt.getMultiplicationFactorB()).contains(LUCKY_NUMBER)) {
+			BadgeCard luckyBadge = giveBadgeToUser(Badge.LUCKY_MULTIPLICATION, _userId);
+			badgeCards.add(luckyBadge);
 		}
 
 		return badgeCards;

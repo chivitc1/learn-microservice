@@ -3,6 +3,7 @@ package com.example.gamification.client;
 import com.example.gamification.client.dto.MultiplicationResultAttempt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 /**
@@ -10,6 +11,7 @@ import org.springframework.web.client.RestTemplate;
  interface connects to
  * the Multiplication microservice via REST.
  */
+@Component
 public class MultiplicationResultAttemptClientImpl
 		implements MultiplicationResultAttemptClient
 {

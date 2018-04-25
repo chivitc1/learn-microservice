@@ -1,5 +1,7 @@
 package com.example.gamification.service;
 
+import com.example.gamification.client.MultiplicationResultAttemptClient;
+import com.example.gamification.client.dto.MultiplicationResultAttempt;
 import com.example.gamification.domain.Badge;
 import com.example.gamification.domain.BadgeCard;
 import com.example.gamification.domain.GameStats;
@@ -20,6 +22,7 @@ import java.util.stream.IntStream;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Matchers.anyLong;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GameServiceImplTest
@@ -32,17 +35,25 @@ public class GameServiceImplTest
 	@Mock
 	private BadgeCardRepository badgeCardRepository;
 
+	@Mock
+	private MultiplicationResultAttemptClient multiplicationClient;
+
 	@Before
 	public void setUp() throws Exception
 	{
-		gameService = new GameServiceImpl(scoreCardRepository, badgeCardRepository);
+		gameService = new GameServiceImpl(scoreCardRepository, badgeCardRepository, multiplicationClient);
+
+		MultiplicationResultAttempt attempt = new MultiplicationResultAttempt(
+				"john_doe", 40, 10, 400, true);
+		given(multiplicationClient.retrieveMultiplicationResultAttemptbyId(anyLong()))
+				.willReturn(attempt);
 	}
 
 	@Test
 	public void testRetrieveStatsForUser() throws Exception {
 		// given
 		Long userId = 1L;
-		Long attemptId = 10L;
+		Long attemptId = 70L;
 		int totalScore = 10;
 		List<ScoreCard> scoreCardList = createNScoreCards(1, userId);
 
@@ -66,7 +77,7 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 1L;
+		Long attemptId = 70L;
 		int totalScore = 10;
 		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
 		boolean correct = true;
@@ -88,7 +99,7 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 10L;
+		Long attemptId = 70L;
 		int totalScore = 10;
 		List<ScoreCard> scoreCardList = createNScoreCards(1, userId);
 		ScoreCard scoreCard = new ScoreCard(userId, attemptId);
@@ -115,7 +126,7 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 30L;
+		Long attemptId = 70L;
 		int totalScore = 100; //total ten correct attempt
 		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
 
@@ -140,7 +151,7 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 30L;
+		Long attemptId = 70L;
 		int totalScore = 250; //total 25 correct attempt
 		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
 		BadgeCard bronzeBadge = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
@@ -166,7 +177,7 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 30L;
+		Long attemptId = 70L;
 		int totalScore = 500; //total 50 correct attempt
 		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
 		BadgeCard bronzeBadge = new BadgeCard(userId, Badge.BRONZE_MULTIPLICATOR);
@@ -193,12 +204,10 @@ public class GameServiceImplTest
 	{
 		// given
 		Long userId = 1L;
-		Long attemptId = 30L;
-		int totalScore = 10; //total 50 correct attempt
+		Long attemptId = 70L;
+		int totalScore = 10;
 		BadgeCard firstWonBadge = new BadgeCard(userId, Badge.FIRST_WON);
-		BadgeCard bronzeBadge = new BadgeCard(userId, Badge.LUCKY_MULTIPLICATION);
 
-		boolean correct = false;
 		given(scoreCardRepository.getTotalScoreForUser(userId))
 				.willReturn(totalScore);
 
@@ -207,8 +216,14 @@ public class GameServiceImplTest
 
 		given(badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId))
 				.willReturn(Arrays.asList(firstWonBadge));
+
+		// the attempt includes the lucky number
+		MultiplicationResultAttempt attempt = new MultiplicationResultAttempt(
+				"chinv", 42, 10, 420, true);
+		given(multiplicationClient.retrieveMultiplicationResultAttemptbyId(anyLong()))
+				.willReturn(attempt);
 		// when
-		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
+		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, true);
 
 		// then
 		assertThat(gameStats.getBadges()).containsOnly(Badge.LUCKY_MULTIPLICATION);
