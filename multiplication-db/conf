@@ -1,0 +1,3 @@
+#!/bin/bash
+
+BASE_DIR=$BASE_DIR/multiplication-db/

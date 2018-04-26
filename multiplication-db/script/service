@@ -1,0 +1,7 @@
+#!/bin/bash
+
+. ./conf
+
+docker service create \
+--name ${CONTAINER} \
+${TAG}

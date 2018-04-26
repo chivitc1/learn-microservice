@@ -17,6 +17,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
+@Transactional(readOnly = true)
 public class MultiplicationServiceImpl implements MultiplicationService
 {
 	private RandomGeneratorService randomGeneratorService;
@@ -61,7 +62,7 @@ public class MultiplicationServiceImpl implements MultiplicationService
 	 * @return true if the attempt matches the result of the
 	 * multiplication, false otherwise.
 	 */
-	@Transactional
+	@Transactional(readOnly = false)
 	@Override
 	public MultiplicationResultAttempt checkAttempt(MultiplicationResultAttempt _resultAttempt)
 	{
