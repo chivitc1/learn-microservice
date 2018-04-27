@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * This class links a Badge to a User. Contains also a
@@ -19,14 +20,17 @@ import javax.persistence.Id;
 @ToString
 @EqualsAndHashCode
 @Entity
+@Table(name = "badge_card")
 public final class BadgeCard
 {
 	@Id
 	@GeneratedValue
-	@Column(name = "BADGE_ID")
-	private final Long badgeId;
+	private final Long id;
 
+	@Column(name = "user_id")
 	private final Long userId;
+
+	@Column(name = "badge_timestamp")
 	private final long badgeTimestamp;
 	private final Badge badge;
 

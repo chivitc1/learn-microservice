@@ -9,6 +9,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Table;
 
 /**
  * This class represents the Score linked to an attempt in the game,
@@ -20,6 +21,7 @@ import javax.persistence.Id;
 @ToString
 @EqualsAndHashCode
 @Entity
+@Table(name = "score_card")
 public final class ScoreCard
 {
 	// The default score assigned to this card, if not specified.
@@ -27,16 +29,15 @@ public final class ScoreCard
 
 	@Id
 	@GeneratedValue
-	@Column(name = "CARD_ID")
-	private final Long cardId;
+	private final Long id;
 
-	@Column(name = "USER_ID")
+	@Column(name = "user_id")
 	private final Long userId;
 
-	@Column(name = "ATTEMPT_ID")
+	@Column(name = "attempt_id")
 	private final Long attemptId;
 
-	@Column(name = "SCORE_TS")
+	@Column(name = "score_timestamp")
 	private final long scoreTimestamp;
 
 	@Column(name = "SCORE")

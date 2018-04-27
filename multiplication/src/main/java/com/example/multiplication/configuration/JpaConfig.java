@@ -35,8 +35,6 @@ public class JpaConfig
 			{
 				setProperty("hibernate.dialect",
 						env.getProperty("hibernate.dialect"));
-				setProperty("hibernate.globally_quoted_identifiers",
-						"true");
 			}
 		};
 	}

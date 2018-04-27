@@ -30,6 +30,7 @@ dependencies {
 
 	compile "org.postgresql:postgresql:42.2.2"
 	compile "com.zaxxer:HikariCP:2.6.1"
+	compile "org.apache.commons:commons-dbcp2:2.0"
 
 	testRuntime 'com.h2database:h2'
 	compile("org.springframework.boot:spring-boot-starter-amqp")
