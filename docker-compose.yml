@@ -23,15 +23,15 @@ services:
       - multiplication
 
   rabbitmq:
-    image: 'bitnami/rabbitmq:latest'
+    image: 'rabbitmq:3-management'
     ports:
       - 5672:5672
       - 15672:15672
     environment:
-      - RABBITMQ_USERNAME=user
-      - RABBITMQ_PASSWORD=bitnami
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
     volumes:
-      - 'rabbitmqdata:/bitnami'
+      - 'rabbitmqdata:/var/lib/rabbitmq'
     networks:
       - multiplication
   multiplication:
@@ -39,9 +39,10 @@ services:
     build:
         context: ./multiplication
     environment:
-      JAVA_OPTS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=5005"
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005"
     ports:
         - 8080:8080
+        - 6005:6005
     networks:
       - multiplication
   gamification:
