@@ -18,6 +18,7 @@ services:
       - 3306:3306
     volumes:
       - 'mysqldata:/var/lib/mysql'
+      - './multiplication-db/files/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
     networks:
       - multiplication
 
@@ -33,17 +34,17 @@ services:
       - 'rabbitmqdata:/var/lib/rabbitmq'
     networks:
       - multiplication
-#  multiplication:
-#    image: 'multiplication:latest'
-#    build:
-#        context: ./multiplication
-#    environment:
-#      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005"
-#    ports:
-#        - 8080:8080
-#        - 6005:6005
-#    networks:
-#      - multiplication
+  multiplication:
+    image: 'multiplication:latest'
+    build:
+        context: ./multiplication
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005"
+    ports:
+        - 8080:8080
+        - 6005:6005
+    networks:
+      - multiplication
   gamification:
     image: 'gamification:latest'
     build:
@@ -51,7 +52,18 @@ services:
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
     ports:
-        - 28081:8081
-        - 6006:6006
+      - 28081:8081
+      - 6006:6006
     networks:
       - multiplication
+  web:
+    image: nginx
+    environment:
+       - NGINX_PORT=80
+    ports:
+      - "9090:80"
+    volumes:
+      - ./ui/conf/etc/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./ui/webapps/ui:/usr/share/nginx/html:ro
+    networks:
+          - multiplication

@@ -1,6 +1,0 @@
-#!/bin/bash
-
-TAG="user-database"
-VERSION="latest"
-
-CONTAINER="user-database"

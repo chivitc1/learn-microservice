@@ -18,6 +18,7 @@ services:
       - 3306:3306
     volumes:
       - 'mysqldata:/var/lib/mysql'
+      - './multiplication-db/files/docker-entrypoint-initdb.d:/docker-entrypoint-initdb.d'
     networks:
       - multiplication
 
@@ -55,3 +56,14 @@ services:
         - 6006:6006
     networks:
       - multiplication
+  web:
+    image: nginx
+    environment:
+       - NGINX_PORT=80
+    ports:
+      - "9090:80"
+    volumes:
+      - ./ui/conf/etc/nginx/conf.d/:/etc/nginx/conf.d/
+      - ./ui/webapps/ui:/usr/share/nginx/html:ro
+    networks:
+          - multiplication

@@ -1,8 +1,0 @@
-#!/bin/bash
-
-. ./conf
-
-docker run -dt \
---name ${CONTAINER} \
---net test \
-${TAG}

@@ -1,6 +1,7 @@
 function updateMultiplication() {
     $.ajax({
-        url: "http://localhost:8080/multiplications/random"
+        url: "http://localhost:8080/multiplications/random",
+        crossDomain: true,
     }).then(function(data) {
         // Cleans the form
         $("#attempt-form").find( "input[name='result-attempt']" ).val("");
@@ -14,6 +15,7 @@ function updateMultiplication() {
 function updateStats(alias) {
     $.ajax({
     url: "http://localhost:8080/results?alias=" + alias,
+    crossDomain: true,
     }).then(function(data) {
         $('#stats-body').empty();
         data.forEach(function(row) {
@@ -46,7 +48,8 @@ $(document).ready(function() {
 
         // Send the data using post
         $.ajax({
-            url: '/results',
+            url: 'http://localhost:8080/results',
+            crossDomain: true,
             type: 'POST',
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
