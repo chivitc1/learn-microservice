@@ -1,19 +1,11 @@
 package com.example.multiplication.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
 
 /**
  * Identifies the attempt from a {@link User} to solve a
@@ -23,29 +15,25 @@ import javax.persistence.Table;
 @EqualsAndHashCode
 @ToString
 @RequiredArgsConstructor
-@Entity
-@Table(name = "multiplication_result_attempt")
+@AllArgsConstructor
 public final class MultiplicationResultAttempt
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Setter
 	private Long id;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "user_id")
-	private final User user;
+	@Setter
+	private User user;
 
-	@ManyToOne(cascade = CascadeType.PERSIST)
-	@JoinColumn(name = "multiplication_id")
-	private final Multiplication multiplication;
+	@Setter
+	private Multiplication multiplication;
 
-	@Column(name = "result_attempt")
 	private final int resultAttempt;
 
 	private final boolean correct;
 
 	MultiplicationResultAttempt()
 	{
+		id = null;
 		user = null;
 		multiplication = null;
 		resultAttempt = -1;

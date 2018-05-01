@@ -3,6 +3,7 @@ package com.example.multiplication.controller;
 import com.example.multiplication.domain.MultiplicationResultAttempt;
 import com.example.multiplication.service.MultiplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -44,8 +45,10 @@ public final class MultiplicationResultAttemptController
 	}
 
 	@GetMapping("/{resultId}")
-	public ResponseEntity getResultById(@PathVariable("resultId") Long _resultId) {
-		return ResponseEntity.ok(
-				multiplicationService.getMultiplicationResult(_resultId));
+	public ResponseEntity<MultiplicationResultAttempt> getResultById(@PathVariable("resultId") Long _resultId) {
+		if (multiplicationService.getMultiplicationResult(_resultId).isPresent()) {
+			return ResponseEntity.ok(multiplicationService.getMultiplicationResult(_resultId).get());
+		}
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
 }

@@ -1,14 +1,13 @@
 package com.example.gamification.repository;
 
 import com.example.gamification.domain.BadgeCard;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
 
 /**
  * Handles data operations with BadgeCards
  */
-public interface BadgeCardRepository extends CrudRepository<BadgeCard, Long>
+public interface BadgeCardRepository
 {
 	/**
 	 * Retrieves all BadgeCards for a given user.
@@ -16,4 +15,6 @@ public interface BadgeCardRepository extends CrudRepository<BadgeCard, Long>
 	 * @return the list of BadgeCards, sorted by most recent.
 	 */
 	List<BadgeCard> findByUserIdOrderByBadgeTimestampDesc(final Long userId);
+
+	void save(BadgeCard _badgeCard);
 }

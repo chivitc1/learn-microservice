@@ -5,32 +5,53 @@ networks:
     driver: bridge
 volumes:
   rabbitmqdata:
-  pgdata:
+  mysqldata:
 services:
-    multiplication-db:
-      image: postgres:latest
-      build:
-          context: ./multiplication-db
-      ports:
-        - 5432:5432
-      environment:
-        - POSTGRES_USER=multiplication
-        - POSTGRES_PASSWORD=multiplication
-        - POSTGRES_DB=multiplication
-      volumes:
-        - 'pgdata:/var/lib/postgresql/data'
-      networks:
-        - multiplication
+  multiplication-db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      - MYSQL_DATABASE=multiplication
+      - MYSQL_ROOT_PASSWORD=multiplication
+      - MYSQL_LOWER_CASE_TABLE_NAMES=1
+    ports:
+      - 3306:3306
+    volumes:
+      - 'mysqldata:/var/lib/mysql'
+    networks:
+      - multiplication
 
-    rabbitmq:
-      image: 'rabbitmq:3-management'
-      ports:
-        - 5672:5672
-        - 15672:15672
-      environment:
-        - RABBITMQ_DEFAULT_USER=user
-        - RABBITMQ_DEFAULT_PASS=password
-      volumes:
-        - 'rabbitmqdata:/var/lib/rabbitmq'
-      networks:
-        - multiplication
+  rabbitmq:
+    image: 'rabbitmq:3-management'
+    ports:
+      - 5672:5672
+      - 15672:15672
+    environment:
+      - RABBITMQ_DEFAULT_USER=user
+      - RABBITMQ_DEFAULT_PASS=password
+    volumes:
+      - 'rabbitmqdata:/var/lib/rabbitmq'
+    networks:
+      - multiplication
+#  multiplication:
+#    image: 'multiplication:latest'
+#    build:
+#        context: ./multiplication
+#    environment:
+#      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6005"
+#    ports:
+#        - 8080:8080
+#        - 6005:6005
+#    networks:
+#      - multiplication
+  gamification:
+    image: 'gamification:latest'
+    build:
+        context: ./gamification
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
+    ports:
+        - 28081:8081
+        - 6006:6006
+    networks:
+      - multiplication

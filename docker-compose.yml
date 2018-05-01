@@ -5,20 +5,19 @@ networks:
     driver: bridge
 volumes:
   rabbitmqdata:
-  pgdata:
+  mysqldata:
 services:
   multiplication-db:
-    image: postgres:latest
-    build:
-        context: ./multiplication-db
-    ports:
-      - 5432:5432
+    image: mysql:5.7
+    restart: always
     environment:
-      - POSTGRES_USER=multiplication
-      - POSTGRES_PASSWORD=multiplication
-      - POSTGRES_DB=multiplication
+      - MYSQL_DATABASE=multiplication
+      - MYSQL_ROOT_PASSWORD=multiplication
+      - MYSQL_LOWER_CASE_TABLE_NAMES=1
+    ports:
+      - 3306:3306
     volumes:
-      - 'pgdata:/var/lib/postgresql/data'
+      - 'mysqldata:/var/lib/mysql'
     networks:
       - multiplication
 
@@ -49,7 +48,10 @@ services:
     image: 'gamification:latest'
     build:
         context: ./gamification
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
     ports:
         - 28081:8081
+        - 6006:6006
     networks:
       - multiplication

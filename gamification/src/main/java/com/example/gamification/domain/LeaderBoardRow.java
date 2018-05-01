@@ -16,10 +16,10 @@ import lombok.ToString;
 public final class LeaderBoardRow
 {
 	private final Long userId;
-	private final Long totalScore;
+	private final Integer totalScore;
 
 	// Empty constructor for JSON / JPA
 	public LeaderBoardRow() {
-		this(0L, 0L);
+		this(0L, 0);
 	}
 }

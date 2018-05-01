@@ -18,7 +18,7 @@ import java.util.List;
  * It can be used as a delta (as a single game iteration) or to
  * represent the total amount of score / badges.
  */
-@RequiredArgsConstructor
+//@RequiredArgsConstructor
 @Getter
 @ToString
 @EqualsAndHashCode
@@ -34,6 +34,13 @@ public final class GameStats
 		this.userId = 0L;
 		this.score = 0;
 		this.badges = new ArrayList<>();
+	}
+
+	public GameStats(Long _userId, int _score, List<Badge> _badges)
+	{
+		userId = _userId;
+		score = _score;
+		badges = _badges;
 	}
 
 	/**

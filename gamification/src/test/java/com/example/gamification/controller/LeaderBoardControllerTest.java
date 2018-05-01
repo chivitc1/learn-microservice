@@ -45,8 +45,8 @@ public class LeaderBoardControllerTest
 	public void getLeaderBoardTest() throws Exception
 	{
 		// given
-		LeaderBoardRow leaderBoardRow1 = new LeaderBoardRow(1L, 500L);
-		LeaderBoardRow leaderBoardRow2 = new LeaderBoardRow(2L, 400L);
+		LeaderBoardRow leaderBoardRow1 = new LeaderBoardRow(1L, 500);
+		LeaderBoardRow leaderBoardRow2 = new LeaderBoardRow(2L, 400);
 		List<LeaderBoardRow> leaderBoard = Arrays.asList(leaderBoardRow1, leaderBoardRow2);
 		given(leaderBoardService.getCurrentLeaderBoard())
 				.willReturn(leaderBoard);

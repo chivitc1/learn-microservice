@@ -83,7 +83,7 @@ public class MultiplicationServiceImpl implements MultiplicationService
 						_resultAttempt.getMultiplication().getFactorB();
 
 		MultiplicationResultAttempt checkedAttempt =
-				new MultiplicationResultAttempt(user.orElse(_resultAttempt.getUser()),
+				new MultiplicationResultAttempt(null, user.orElse(_resultAttempt.getUser()),
 						multiplication.orElse(_resultAttempt.getMultiplication()),
 						_resultAttempt.getResultAttempt(),
 						correct);
@@ -106,7 +106,7 @@ public class MultiplicationServiceImpl implements MultiplicationService
 	}
 
 	@Override
-	public MultiplicationResultAttempt getMultiplicationResult(Long _resultId) {
+	public Optional<MultiplicationResultAttempt> getMultiplicationResult(Long _resultId) {
 		return attemptRepository.getById(_resultId);
 	}
 

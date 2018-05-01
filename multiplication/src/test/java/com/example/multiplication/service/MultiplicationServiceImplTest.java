@@ -71,10 +71,10 @@ public class MultiplicationServiceImplTest
 		Multiplication multiplication = new Multiplication(50, 60);
 		User user = new User("chinv");
 		MultiplicationResultAttempt attempt =
-				new MultiplicationResultAttempt(user, multiplication, 3000, false);
+				new MultiplicationResultAttempt(null, user, multiplication, 3000, false);
 
 		MultiplicationResultAttempt verifiedAttempt =
-				new MultiplicationResultAttempt(user, multiplication, 3000, true);
+				new MultiplicationResultAttempt(null, user, multiplication, 3000, true);
 		given(userRepository.findByAlias("chinv"))
 				.willReturn(Optional.empty());
 		given(multiplicationRepository.findFirstByFactorAAndFactorB(
@@ -98,10 +98,10 @@ public class MultiplicationServiceImplTest
 	public void checkWrongAttemptTest() throws Exception
 	{
 		// given
-		Multiplication multiplication = new Multiplication(50, 60);
+		Multiplication multiplication = new Multiplication(null,50, 60);
 		User user = new User("chinv");
 		MultiplicationResultAttempt attempt =
-				new MultiplicationResultAttempt(user, multiplication, 3001, false);
+				new MultiplicationResultAttempt(null, user, multiplication, 3001, false);
 
 		given(userRepository.findByAlias("chinv"))
 				.willReturn(Optional.empty());
@@ -129,10 +129,10 @@ public class MultiplicationServiceImplTest
 		User user = new User("chinv");
 
 		MultiplicationResultAttempt attempt1 = new
-				MultiplicationResultAttempt(
+				MultiplicationResultAttempt(null,
 				user, multiplication, 3010, false);
 		MultiplicationResultAttempt attempt2 = new
-				MultiplicationResultAttempt(
+				MultiplicationResultAttempt(null,
 				user, multiplication, 3051, false);
 		List<MultiplicationResultAttempt> latestAttempts =
 				Lists.newArrayList(attempt1, attempt2);

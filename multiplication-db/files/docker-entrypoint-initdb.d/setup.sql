@@ -1,57 +1,42 @@
---DROP DATABASE IF EXISTS multiplication;
---CREATE DATABASE multiplication;
---\c "multiplication"
+CREATE TABLE `user` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `alias` varchar(255) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS multiplication;
-DROP SEQUENCE IF EXISTS multiplication_id_seq;
-CREATE SEQUENCE multiplication_id_seq;
+CREATE TABLE `score_card` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `attempt_id` bigint(20) DEFAULT NULL,
+  `score` int(11) NOT NULL,
+  `score_timestamp` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS multiplication_result_attempt;
-DROP SEQUENCE IF EXISTS multiplication_result_attempt_id_seq;
-CREATE SEQUENCE multiplication_result_attempt_id_seq;
+CREATE TABLE `badge_card` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `badge` int(11) DEFAULT NULL,
+  `badge_timestamp` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS "user";
-DROP SEQUENCE IF EXISTS user_id_seq;
-CREATE SEQUENCE user_id_seq;
+CREATE TABLE `multiplication` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `factor_a` int(11) DEFAULT NULL,
+  `factor_b` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
-DROP TABLE IF EXISTS "badge_card"
-DROP SEQUENCE IF EXISTS badge_card_id_seq;
-CREATE SEQUENCE badge_card_id_seq;
-
-DROP TABLE IF EXISTS "score_card"
-DROP SEQUENCE IF EXISTS score_card_id_seq;
-CREATE SEQUENCE score_card_id_seq;
-
-CREATE TABLE multiplication (
-    id BIGINT PRIMARY KEY DEFAULT NEXTVAL('multiplication_id_seq'),
-    factor_a INT NOT NULL,
-    factor_b INT NOT NULL
-);
-
-CREATE TABLE multiplication_result_attempt (
-    id BIGINT PRIMARY KEY DEFAULT NEXTVAL('multiplication_result_attempt_id_seq'),
-    user_id BIGINT NOT NULL,
-    MULTIPLICATION_ID BIGINT NOT NULL,
-    result_attempt INT NOT NULL,
-    correct BIT NOT NULL
-);
-
-CREATE TABLE "user" (
-    id BIGINT PRIMARY KEY DEFAULT NEXTVAL('user_id_seq'),
-    alias VARCHAR NOT NULL
-);
-
-CREATE TABLE "badge_card" (
-    id BIGINT PRIMARY KEY DEFAULT NEXTVAL('badge_card_id_seq'),
-    user_id BIGINT NOT NULL,
-    badge_timestamp TIMESTAMP,
-    badge VARCHAR NOT NULL
-);
-
-CREATE TABLE "score_card" (
-    id BIGINT PRIMARY KEY DEFAULT NEXTVAL('score_card_id_seq'),
-    user_id BIGINT NOT NULL,
-    attempt_id BIGINT NOT NULL,
-    score_timestamp TIMESTAMP,
-    score INT NOT NULL
-);
+CREATE TABLE `multiplication_result_attempt` (
+  `id` bigint(20) NOT NULL AUTO_INCREMENT,
+  `correct` bit(1) NOT NULL,
+  `result_attempt` int(11) DEFAULT NULL,
+  `multiplication_id` bigint(20) DEFAULT NULL,
+  `user_id` bigint(20) DEFAULT NULL,
+  PRIMARY KEY (`id`),
+  KEY `FK_MULTIPLICATION_RESULT_ATTEMPT_MULTIPLICATION` (`multiplication_id`),
+  KEY `FK_MULTIPLICATION_RESULT_ATTEMPT_USER` (`user_id`),
+  CONSTRAINT `FK_MULTIPLICATION_RESULT_ATTEMPT_MULTIPLICATION` FOREIGN KEY (`multiplication_id`) REFERENCES `multiplication` (`id`),
+  CONSTRAINT `FK_MULTIPLICATION_RESULT_ATTEMPT_USER` FOREIGN KEY (`user_id`) REFERENCES `user` (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;

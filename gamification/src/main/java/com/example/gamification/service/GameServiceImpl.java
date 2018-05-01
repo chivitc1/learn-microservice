@@ -76,7 +76,7 @@ public class GameServiceImpl implements GameService
 	private List<BadgeCard> processForBadges(final Long _userId, final Long _attemptId)
 	{
 		List<BadgeCard> badgeCards = new ArrayList<>();
-		int totalScore = scoreCardRepository.getTotalScoreForUser(_userId);
+		Integer totalScore = scoreCardRepository.getTotalScoreForUser(_userId);
 		log.info("New score for user {} is {}", _userId, totalScore);
 		List<ScoreCard> scoreCardList =
 				scoreCardRepository.findByUserIdOrderByScoreTimestampDesc(_userId);
@@ -84,14 +84,19 @@ public class GameServiceImpl implements GameService
 				badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(_userId);
 
 		// Badges depending on score
+		Optional<BadgeCard> optBadgeCard;
+		int score = 0;
+		if (totalScore != null) {
+			score = totalScore;
+		}
 		checkAndGiveBadgeBasedOnScore(badgeCardList,
-				Badge.BRONZE_MULTIPLICATOR, totalScore, 100, _userId)
+				Badge.BRONZE_MULTIPLICATOR, score, 100, _userId)
 				.ifPresent(badgeCards::add);
 		checkAndGiveBadgeBasedOnScore(badgeCardList,
-				Badge.SILVER_MULTIPLICATOR, totalScore, 250, _userId)
+				Badge.SILVER_MULTIPLICATOR, score, 250, _userId)
 				.ifPresent(badgeCards::add);
 		checkAndGiveBadgeBasedOnScore(badgeCardList,
-				Badge.GOLD_MULTIPLICATOR, totalScore, 500, _userId)
+				Badge.GOLD_MULTIPLICATOR, score, 500, _userId)
 				.ifPresent(badgeCards::add);
 
 		// First won badge
@@ -161,7 +166,8 @@ public class GameServiceImpl implements GameService
 	@Override
 	public GameStats retrieveStatsForUser(final Long userId)
 	{
-		int score = scoreCardRepository.getTotalScoreForUser(userId);
+		Integer score = scoreCardRepository.getTotalScoreForUser(userId);
+
 		List<BadgeCard> badgeCards = badgeCardRepository.findByUserIdOrderByBadgeTimestampDesc(userId);
 
 		return new GameStats(userId, score, badgeCards.stream()

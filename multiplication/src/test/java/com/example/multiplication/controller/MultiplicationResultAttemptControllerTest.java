@@ -20,6 +20,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.BDDMockito.given;
@@ -65,11 +66,11 @@ public class MultiplicationResultAttemptControllerTest
 		Multiplication multiplication = new Multiplication(50, 60);
 		int resultAttempt = 3000;
 		given(multiplicationService.checkAttempt(any(MultiplicationResultAttempt.class)))
-				.willReturn(new MultiplicationResultAttempt(user, multiplication, resultAttempt, _correct));
+				.willReturn(new MultiplicationResultAttempt(null, user, multiplication, resultAttempt, _correct));
 
 
 		MultiplicationResultAttempt attempt =
-				new MultiplicationResultAttempt(user, multiplication, resultAttempt, _correct);
+				new MultiplicationResultAttempt(null, user, multiplication, resultAttempt, _correct);
 
 		// when
 		MockHttpServletResponse response = mockMvc.perform(
@@ -82,7 +83,7 @@ public class MultiplicationResultAttemptControllerTest
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getContentAsString())
 				.isEqualTo(
-						jsonAttemptResult.write(new MultiplicationResultAttempt(attempt.getUser(),
+						jsonAttemptResult.write(new MultiplicationResultAttempt(null, attempt.getUser(),
 								attempt.getMultiplication(),
 								attempt.getResultAttempt(),
 								_correct))
@@ -96,7 +97,7 @@ public class MultiplicationResultAttemptControllerTest
 		Multiplication multiplication = new Multiplication
 				(50, 70);
 		MultiplicationResultAttempt attempt = new
-				MultiplicationResultAttempt(
+				MultiplicationResultAttempt(null,
 				user, multiplication, 3500, true);
 		List<MultiplicationResultAttempt> recentAttempts =
 				Lists.newArrayList(attempt, attempt);
@@ -121,8 +122,10 @@ public class MultiplicationResultAttemptControllerTest
 		Long resultId = 1L;
 		Multiplication multiplication = new Multiplication(30, 40);
 		User user = new User("chinv");
-		MultiplicationResultAttempt resultAttempt =
-				new MultiplicationResultAttempt(user, multiplication, 121, false);
+		Optional<MultiplicationResultAttempt> resultAttempt =
+				Optional.of(new MultiplicationResultAttempt(null,
+						user, multiplication, 121, false));
+		assertThat(resultAttempt.isPresent()).isTrue();
 		given(multiplicationService.getMultiplicationResult(resultId))
 				.willReturn(resultAttempt);
 		// when
@@ -135,7 +138,7 @@ public class MultiplicationResultAttemptControllerTest
 		assertThat(response.getStatus()).isEqualTo(HttpStatus.OK.value());
 		assertThat(response.getContentAsString())
 				.isEqualTo(
-						jsonAttemptResult.write(resultAttempt).getJson()
+						jsonAttemptResult.write(resultAttempt.get()).getJson()
 				);
 	}
 }

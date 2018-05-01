@@ -1,12 +1,11 @@
 package com.example.multiplication.repository;
 
 import com.example.multiplication.domain.MultiplicationResultAttempt;
-import org.springframework.data.repository.CrudRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface MultiplicationResultAttemptRepository
-	extends CrudRepository<MultiplicationResultAttempt, Long>
 {
 	/**
 	 * @return the latest 5 attempts for a given user,
@@ -14,5 +13,7 @@ public interface MultiplicationResultAttemptRepository
 	 */
 	List<MultiplicationResultAttempt> findTop5ByUserAliasOrderByIdDesc(String userAlias);
 
-	MultiplicationResultAttempt getById(Long _resultId);
+	Optional<MultiplicationResultAttempt> getById(Long _resultId);
+
+	MultiplicationResultAttempt save(MultiplicationResultAttempt _resultAttempt);
 }

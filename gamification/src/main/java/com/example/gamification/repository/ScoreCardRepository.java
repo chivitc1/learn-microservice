@@ -2,16 +2,13 @@ package com.example.gamification.repository;
 
 import com.example.gamification.domain.LeaderBoardRow;
 import com.example.gamification.domain.ScoreCard;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.CrudRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 /**
  * Handles CRUD operations with ScoreCards
  */
-public interface ScoreCardRepository extends CrudRepository<ScoreCard, Long>
+public interface ScoreCardRepository
 {
 	/**
 	 * Gets the total score for a given user, being the sum of
@@ -20,18 +17,13 @@ public interface ScoreCardRepository extends CrudRepository<ScoreCard, Long>
 	score should be retrieved
 	 * @return the total score for the given user
 	 */
-	@Query("SELECT SUM(s.score) FROM com.example.gamification.domain.ScoreCard s " +
-			"WHERE s.userId = :userId GROUP BY s.userId")
-	int getTotalScoreForUser(@Param("userId") final Long userId);
+	Integer getTotalScoreForUser(final Long userId);
 
 	/**
 	 * Retrieves a list of {@link LeaderBoardRow}s representing
 	 the Leader Board of users and their total score.
 	 * @return the leader board, sorted by highest score first.
 	 */
-	@Query("SELECT NEW com.example.gamification.domain.LeaderBoardRow(s.userId, SUM(s.score)) " +
-			"FROM com.example.gamification.domain.ScoreCard s " +
-			"GROUP BY s.userId ORDER BY SUM(s.score) DESC")
 	List<LeaderBoardRow> findFirst10();
 
 	/**
@@ -42,4 +34,6 @@ public interface ScoreCardRepository extends CrudRepository<ScoreCard, Long>
 	given user, sorted by most recent.
 	 */
 	List<ScoreCard> findByUserIdOrderByScoreTimestampDesc(Long userId);
+
+	void save(ScoreCard _scoreCard);
 }

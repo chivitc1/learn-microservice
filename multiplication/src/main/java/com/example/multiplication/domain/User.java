@@ -1,34 +1,29 @@
 package com.example.multiplication.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Table;
 
 /**
  * Store information to identify the user
  */
-@Getter
 @RequiredArgsConstructor
+@Getter
 @ToString
 @EqualsAndHashCode
-@Entity
-@Table(name = "\"user\"")
+@AllArgsConstructor
 public final class User
 {
-	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Setter
 	private Long id;
 
 	private final String alias;
 
 	protected User() {
+		id = null;
 		alias = null;
 	}
 }
