@@ -6,8 +6,10 @@ import com.example.gamification.repository.BadgeCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
@@ -19,11 +21,14 @@ import java.util.Map;
 public class BadgeCardDao implements BadgeCardRepository
 {
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
+	private final DataSource dataSource;
 
 	@Autowired
-	public BadgeCardDao(NamedParameterJdbcTemplate _namedParameterJdbcTemplate)
+	public BadgeCardDao(NamedParameterJdbcTemplate _namedParameterJdbcTemplate,
+						DataSource _dataSource)
 	{
 		namedParameterJdbcTemplate = _namedParameterJdbcTemplate;
+		dataSource = _dataSource;
 	}
 
 	/**
@@ -44,14 +49,34 @@ public class BadgeCardDao implements BadgeCardRepository
 	}
 
 	@Override
-	public void save(BadgeCard _badgeCard)
+	public BadgeCard save(BadgeCard _badgeCard)
 	{
-		String sql = "INSERT INTO badge_card(user_id, badge_timestamp, badge) values(:userId, :badgeTimestamp, :badge)";
 		Map<String, Object> params = new HashMap<>();
-		params.put("userId", _badgeCard.getUserId());
-		params.put("badgeTimestamp", _badgeCard.getBadgeTimestamp());
-		params.put("badge", _badgeCard.getBadge());
-		namedParameterJdbcTemplate.update(sql, params);
+		if (_badgeCard.getId() != null) {
+			String sqlUpdate = "UPDATE badge_card SET user_id = :user_id, " +
+					"badge_timestamp = :badge_timestamp, badge = :badge " +
+					"WHERE id = :id";
+			params.put("user_id", _badgeCard.getUserId());
+			params.put("badge_timestamp", _badgeCard.getBadgeTimestamp());
+			params.put("badge", _badgeCard.getBadge().toString());
+			params.put("id", _badgeCard.getId());
+			namedParameterJdbcTemplate.update(sqlUpdate, params);
+
+			return _badgeCard;
+		}
+
+		params.put("user_id", _badgeCard.getUserId());
+		params.put("badge_timestamp", _badgeCard.getBadgeTimestamp());
+		params.put("badge", _badgeCard.getBadge().toString());
+
+		SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+				.withTableName("badge_card")
+				.usingColumns(new String[] {"user_id", "badge_timestamp", "badge" })
+				.usingGeneratedKeyColumns(new String[]{"id"});
+		Long newId = simpleJdbcInsert.executeAndReturnKey(params).longValue();
+		_badgeCard.setId(newId);
+
+		return _badgeCard;
 	}
 
 	private class BadgeCardRowMapper implements RowMapper<BadgeCard> {

@@ -52,7 +52,7 @@ services:
     environment:
       - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
     ports:
-      - 28081:8081
+      - 8081:8081
       - 6006:6006
     networks:
       - multiplication

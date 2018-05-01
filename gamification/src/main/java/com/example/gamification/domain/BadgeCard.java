@@ -1,9 +1,11 @@
 package com.example.gamification.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.RequiredArgsConstructor;
+import lombok.Setter;
 import lombok.ToString;
 
 import java.sql.Timestamp;
@@ -16,9 +18,11 @@ import java.sql.Timestamp;
 @Getter
 @ToString
 @EqualsAndHashCode
+@AllArgsConstructor
 public final class BadgeCard
 {
-	private final Long id;
+	@Setter
+	private Long id;
 
 	@NonNull
 	private final Long userId;

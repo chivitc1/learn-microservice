@@ -2,7 +2,6 @@ package com.example.gamification.controller;
 
 import com.example.gamification.domain.LeaderBoardRow;
 import com.example.gamification.service.LeaderBoardService;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,7 +14,6 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/leaders")
-@CrossOrigin(origins = "http://localhost:8081")
 public class LeaderBoardController
 {
 	private final LeaderBoardService leaderBoardService;

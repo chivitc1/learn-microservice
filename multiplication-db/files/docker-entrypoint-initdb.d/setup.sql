@@ -8,23 +8,23 @@ CREATE TABLE `score_card` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `attempt_id` bigint(20) DEFAULT NULL,
   `score` int(11) NOT NULL,
-  `score_timestamp` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `score_timestamp` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=latin1;
 
 CREATE TABLE `badge_card` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `badge` int(11) DEFAULT NULL,
-  `badge_timestamp` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `badge` VARCHAR(30) NOT NULL,
+  `badge_timestamp` timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `user_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 CREATE TABLE `multiplication` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
-  `factor_a` int(11) DEFAULT NULL,
-  `factor_b` int(11) DEFAULT NULL,
+  `factor_a` int(11) NOT NULL,
+  `factor_b` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=latin1;
 
@@ -32,8 +32,8 @@ CREATE TABLE `multiplication_result_attempt` (
   `id` bigint(20) NOT NULL AUTO_INCREMENT,
   `correct` bit(1) NOT NULL,
   `result_attempt` int(11) DEFAULT NULL,
-  `multiplication_id` bigint(20) DEFAULT NULL,
-  `user_id` bigint(20) DEFAULT NULL,
+  `multiplication_id` bigint(20) NOT NULL,
+  `user_id` bigint(20) NOT NULL,
   PRIMARY KEY (`id`),
   KEY `FK_MULTIPLICATION_RESULT_ATTEMPT_MULTIPLICATION` (`multiplication_id`),
   KEY `FK_MULTIPLICATION_RESULT_ATTEMPT_USER` (`user_id`),

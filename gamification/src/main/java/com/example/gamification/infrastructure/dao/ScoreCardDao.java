@@ -4,11 +4,14 @@ import com.example.gamification.domain.LeaderBoardRow;
 import com.example.gamification.domain.ScoreCard;
 import com.example.gamification.repository.ScoreCardRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 
+import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -20,13 +23,16 @@ public class ScoreCardDao implements ScoreCardRepository
 {
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
 	private final JdbcTemplate jdbcTemplate;
+	private final DataSource dataSource;
 
 	@Autowired
 	public ScoreCardDao(NamedParameterJdbcTemplate _namedParameterJdbcTemplate,
-						JdbcTemplate _jdbcTemplate)
+						JdbcTemplate _jdbcTemplate,
+						DataSource _dataSource)
 	{
 		namedParameterJdbcTemplate = _namedParameterJdbcTemplate;
 		jdbcTemplate = _jdbcTemplate;
+		dataSource = _dataSource;
 	}
 
 
@@ -37,8 +43,13 @@ public class ScoreCardDao implements ScoreCardRepository
 				"WHERE s.user_id = :userId GROUP BY s.user_id";
 		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userId);
-
-		return namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+		Integer score;
+		try {
+			score = namedParameterJdbcTemplate.queryForObject(sql, params, Integer.class);
+			return score;
+		} catch (EmptyResultDataAccessException _e) {
+			return 0;
+		}
 	}
 
 	@Override
@@ -64,16 +75,36 @@ public class ScoreCardDao implements ScoreCardRepository
 	}
 
 	@Override
-	public void save(ScoreCard _scoreCard)
+	public ScoreCard save(ScoreCard _scoreCard)
 	{
-		String sql = "INSERT INTO score_card(user_id, attempt_id, score_timestamp, score) " +
-				"VALUES(:userId, :attemptId, :scoreTimestamp, :score)";
 		Map<String, Object> params = new HashMap<>();
-		params.put("userId", _scoreCard.getUserId());
-		params.put("attempId", _scoreCard.getAttemptId());
-		params.put("scoreTimestamp", _scoreCard.getScoreTimestamp());
+		if (_scoreCard.getId() != null) {
+			String sqlUpdate = "UPDATE score_card SET user_id = :user_id, attempt_id = :attempt_id," +
+					" score_timestamp = :score_timestamp, score = :score " +
+					"WHERE id = :id";
+			params.put("user_id", _scoreCard.getUserId());
+			params.put("attempt_id", _scoreCard.getAttemptId());
+			params.put("score_timestamp", _scoreCard.getScoreTimestamp());
+			params.put("score", _scoreCard.getScore());
+			params.put("id", _scoreCard.getId());
+			namedParameterJdbcTemplate.update(sqlUpdate, params);
+
+			return _scoreCard;
+		}
+
+		params.put("user_id", _scoreCard.getUserId());
+		params.put("attempt_id", _scoreCard.getAttemptId());
+		params.put("score_timestamp", _scoreCard.getScoreTimestamp());
 		params.put("score", _scoreCard.getScore());
-		namedParameterJdbcTemplate.update(sql, params);
+
+		SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
+				.withTableName("score_card")
+				.usingColumns(new String[] {"user_id", "attempt_id", "score_timestamp", "score"})
+				.usingGeneratedKeyColumns(new String[]{"id"});
+		Long newId = simpleJdbcInsert.executeAndReturnKey(params).longValue();
+		_scoreCard.setId(newId);
+
+		return _scoreCard;
 	}
 
 	private class LeaderBoardRowMapper implements RowMapper<LeaderBoardRow> {

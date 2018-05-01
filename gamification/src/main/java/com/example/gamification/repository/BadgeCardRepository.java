@@ -16,5 +16,5 @@ public interface BadgeCardRepository
 	 */
 	List<BadgeCard> findByUserIdOrderByBadgeTimestampDesc(final Long userId);
 
-	void save(BadgeCard _badgeCard);
+	BadgeCard save(BadgeCard _badgeCard);
 }

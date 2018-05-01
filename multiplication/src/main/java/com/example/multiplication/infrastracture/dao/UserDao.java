@@ -61,6 +61,7 @@ public class UserDao implements UserRepository
 
 		SimpleJdbcInsert simpleJdbcInsert = new SimpleJdbcInsert(dataSource)
 				.withTableName("user")
+				.usingColumns(new String[] {"alias"})
 				.usingGeneratedKeyColumns(new String[]{"id"});
 		Long newId = simpleJdbcInsert.executeAndReturnKey(params).longValue();
 		_user.setId(newId);

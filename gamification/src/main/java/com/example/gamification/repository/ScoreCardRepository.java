@@ -35,5 +35,5 @@ public interface ScoreCardRepository
 	 */
 	List<ScoreCard> findByUserIdOrderByScoreTimestampDesc(Long userId);
 
-	void save(ScoreCard _scoreCard);
+	ScoreCard save(ScoreCard _scoreCard);
 }

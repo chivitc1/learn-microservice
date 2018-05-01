@@ -1,7 +1,6 @@
 function updateMultiplication() {
     $.ajax({
-        url: "http://localhost:8080/multiplications/random",
-        crossDomain: true,
+        url: "http://localhost:8080/multiplications/random"
     }).then(function(data) {
         // Cleans the form
         $("#attempt-form").find( "input[name='result-attempt']" ).val("");
@@ -12,19 +11,24 @@ function updateMultiplication() {
     });
 }
 
-function updateStats(alias) {
+function updateResults(alias) {
+    var userId = -1;
     $.ajax({
-    url: "http://localhost:8080/results?alias=" + alias,
-    crossDomain: true,
-    }).then(function(data) {
-        $('#stats-body').empty();
-        data.forEach(function(row) {
-            $('#stats-body').append('<tr><td>' + row.id + '</td>' +
-            '<td>' + row.multiplication.factorA + ' x ' + row.multiplication.factorB + '</td>' +
-            '<td>' + row.resultAttempt + '</td>' +
-            '<td>' + (row.correct === true ? 'YES' : 'NO') + '</td></tr>');
-        });
+        async: false,
+        url: "http://localhost:8080/results?alias=" + alias,
+        success: function(data) {
+            $('#results-div').show();
+            $('#results-body').empty();
+            data.forEach(function(row) {
+                $('#results-body').append('<tr><td>' + row.id + '</td>' +
+                    '<td>' + row.multiplication.factorA + ' x ' + row.multiplication.factorB + '</td>' +
+                    '<td>' + row.resultAttempt + '</td>' +
+                    '<td>' + (row.correct === true ? 'YES' : 'NO') + '</td></tr>');
+            });
+            userId = data[0].user.id;
+        }
     });
+    return userId;
 }
 
 $(document).ready(function() {
@@ -49,21 +53,28 @@ $(document).ready(function() {
         // Send the data using post
         $.ajax({
             url: 'http://localhost:8080/results',
-            crossDomain: true,
             type: 'POST',
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
+            async: false,
             success: function(result){
                 if(result.correct) {
-                    $('.result-message').empty().append("The result is correct! Congratulations!");
+                    $('.result-message').empty()
+                        .append("<p class='bg-success text-center'>The result is correct! Congratulations!</p>");
                 } else {
-                    $('.result-message').empty().append("Ooops that's not correct! But keep trying!");
+                    $('.result-message').empty()
+                        .append("<p class='bg-danger text-center'>Ooops that's not correct! But keep trying!</p>");
                 }
             }
         });
 
         updateMultiplication();
-        updateStats(userAlias);
+
+        setTimeout(function(){
+            var userId = updateResults(userAlias);
+            updateStats(userId);
+            updateLeaderBoard();
+        }, 300);
     });
 });
