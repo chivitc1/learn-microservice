@@ -3,6 +3,7 @@ package com.example.gamification.infrastructure.dao;
 import com.example.gamification.domain.LeaderBoardRow;
 import com.example.gamification.domain.ScoreCard;
 import com.example.gamification.repository.ScoreCardRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -14,11 +15,13 @@ import org.springframework.stereotype.Repository;
 import javax.sql.DataSource;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 @Repository
+@Slf4j
 public class ScoreCardDao implements ScoreCardRepository
 {
 	private final NamedParameterJdbcTemplate namedParameterJdbcTemplate;
@@ -71,7 +74,8 @@ public class ScoreCardDao implements ScoreCardRepository
 		Map<String, Object> params = new HashMap<>();
 		params.put("userId", userId);
 
-		return namedParameterJdbcTemplate.queryForList(sql, params, ScoreCard.class);
+		List<ScoreCard> list = namedParameterJdbcTemplate.query(sql, params, new ScoreCardRowMapper());
+		return list;
 	}
 
 	@Override
@@ -107,7 +111,7 @@ public class ScoreCardDao implements ScoreCardRepository
 		return _scoreCard;
 	}
 
-	private class LeaderBoardRowMapper implements RowMapper<LeaderBoardRow> {
+	private static final class LeaderBoardRowMapper implements RowMapper<LeaderBoardRow> {
 
 		@Override
 		public LeaderBoardRow mapRow(ResultSet rs, int rowNum) throws SQLException
@@ -115,6 +119,21 @@ public class ScoreCardDao implements ScoreCardRepository
 			Long userId = rs.getLong("user_id");
 			Integer totalScore = rs.getInt("total_score");
 			LeaderBoardRow row = new LeaderBoardRow(userId, totalScore);
+			return row;
+		}
+	}
+
+	private static final class ScoreCardRowMapper implements RowMapper<ScoreCard> {
+
+		@Override
+		public ScoreCard mapRow(ResultSet rs, int rowNum) throws SQLException
+		{
+			Long id = rs.getLong("id");
+			Long userId = rs.getLong("user_id");
+			Long attemptId = rs.getLong("attempt_id");
+			Timestamp scoreTimestamp = rs.getTimestamp("score_timestamp");
+			Integer score = rs.getInt("score");
+			ScoreCard row = new ScoreCard(id, userId, attemptId, scoreTimestamp, score);
 			return row;
 		}
 	}

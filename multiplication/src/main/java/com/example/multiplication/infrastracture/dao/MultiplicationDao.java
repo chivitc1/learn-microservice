@@ -50,8 +50,8 @@ public class MultiplicationDao implements MultiplicationRepository
 	{
 		Map<String, Object> params = new HashMap<>();
 		if (_multiplication.getId() != null) {
-			String updateSql = "UPDATE multiplication SET factor_a = :factorA, " +
-					"factor_b = :factorB WHERE id = :id";
+			String updateSql = "UPDATE multiplication SET factor_a = :factor_a, " +
+					"factor_b = :factor_b WHERE id = :id";
 			params.put("factor_a", _multiplication.getFactorA());
 			params.put("factor_b", _multiplication.getFactorB());
 
@@ -60,8 +60,8 @@ public class MultiplicationDao implements MultiplicationRepository
 			return _multiplication;
 		}
 
-		params.put("factorA", _multiplication.getFactorA());
-		params.put("factorB", _multiplication.getFactorB());
+		params.put("factor_a", _multiplication.getFactorA());
+		params.put("factor_b", _multiplication.getFactorB());
 
 		SimpleJdbcInsert jdbcInsert = new SimpleJdbcInsert(dataSource);
 		jdbcInsert.withTableName("multiplication")

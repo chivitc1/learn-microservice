@@ -41,7 +41,7 @@ dependencies {
 
 }
 
-configurations {
-	providedRuntime
-	compile.exclude(group: 'ch.qos.logback')
-}
+//configurations {
+//	providedRuntime
+//	compile.exclude(group: 'ch.qos.logback')
+//}

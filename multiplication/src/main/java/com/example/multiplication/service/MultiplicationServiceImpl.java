@@ -102,6 +102,8 @@ public class MultiplicationServiceImpl implements MultiplicationService
 	@Override
 	public List<MultiplicationResultAttempt> getStatsForUser(String _userAlias)
 	{
+		//Check user exist
+
 		return attemptRepository.findTop5ByUserAliasOrderByIdDesc(_userAlias);
 	}
 

@@ -40,7 +40,7 @@ dependencies {
 	testCompile group: 'org.assertj', name: 'assertj-core', version: '3.9.0'
 }
 
-configurations {
-	providedRuntime
-	compile.exclude(group: 'ch.qos.logback')
-}
+//configurations {
+//	providedRuntime
+//	compile.exclude(group: 'ch.qos.logback')
+//}

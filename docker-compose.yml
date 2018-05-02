@@ -45,17 +45,17 @@ services:
         - 6005:6005
     networks:
       - multiplication
-#  gamification:
-#    image: 'gamification:latest'
-#    build:
-#        context: ./gamification
-#    environment:
-#      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
-#    ports:
-#        - 8081:8081
-#        - 6006:6006
-#    networks:
-#      - multiplication
+  gamification:
+    image: 'gamification:latest'
+    build:
+        context: ./gamification
+    environment:
+      - "JAVA_OPTS=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6006"
+    ports:
+        - 8081:8081
+        - 6006:6006
+    networks:
+      - multiplication
   web:
     image: nginx
     environment:

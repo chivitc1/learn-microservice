@@ -65,10 +65,11 @@ public class MultiplicationResultAttemptDao implements MultiplicationResultAttem
 	@Override
 	public Optional<MultiplicationResultAttempt> getById(Long _resultId)
 	{
-		String sql = "SELECT s.id, s.user_id, s.multiplication_id, s.result_attempt, s.correct " +
+		String sql = "SELECT s.id, s.user_id, s.multiplication_id, s.result_attempt, s.correct, " +
 				"t.alias, p.factor_a, p.factor_b " +
 				"FROM multiplication_result_attempt s " +
-				"INNER JOIN user t ON s.user_id = t.id" +
+				"INNER JOIN user t ON s.user_id = t.id " +
+				"INNER JOIN multiplication p ON s.multiplication_id = p.id " +
 				"WHERE s.id = :id";
 		Map<String, Object> params = new HashMap<>();
 		params.put("id", _resultId);

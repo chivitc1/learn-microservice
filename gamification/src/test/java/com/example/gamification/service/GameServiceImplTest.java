@@ -117,8 +117,8 @@ public class GameServiceImplTest
 		GameStats gameStats = gameService.newAttemptForUser(userId, attemptId, correct);
 
 		// then
-		assertThat(gameStats.getBadges()).containsOnly(Badge.FIRST_WON);
-		assertThat(gameStats.getScore()).isEqualTo(totalScore);
+		assertThat(gameStats.getBadges()).isEmpty();
+		assertThat(gameStats.getScore()).isEqualTo(0);
 	}
 
 	@Test

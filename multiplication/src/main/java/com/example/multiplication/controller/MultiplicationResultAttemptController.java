@@ -39,9 +39,12 @@ public final class MultiplicationResultAttemptController
 	@GetMapping
 	ResponseEntity<List<MultiplicationResultAttempt>>
 		getStatistics(@RequestParam("alias") String alias) {
-		return ResponseEntity.ok(
-				multiplicationService.getStatsForUser(alias)
-		);
+
+		List<MultiplicationResultAttempt> list = multiplicationService.getStatsForUser(alias);
+		if (list.size() > 0) {
+			return ResponseEntity.ok(list);
+		}
+		return new ResponseEntity<List<MultiplicationResultAttempt>>(HttpStatus.NOT_FOUND);
 	}
 
 	@GetMapping("/{resultId}")
